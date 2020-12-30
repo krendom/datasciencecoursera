@@ -1,0 +1,44 @@
+# Coursera Exploratory Analysis - Assignment 1
+
+# Plot 4
+
+# Set WD, load libraries and dependencies
+setwd("C:/Users/apnt8/OneDrive/Data Science/Coursera Specialisation/Exploratory Analysis")
+library(dplyr)
+library(lubridate)
+
+# Get the data
+dat <- read.table("household_power_consumption.txt", header=TRUE, sep=";", na.strings = "?")
+
+# Clean and format the key variables
+dat <- dat %>%
+      subset(Date %in% c("1/2/2007","2/2/2007")) %>% 
+      mutate(Date = as.POSIXct(dmy_hms(as.character(paste(Date, Time)))),
+             Global_active_power = as.numeric(as.character(Global_active_power)),
+             Sub_metering_1 = as.numeric(as.character(Sub_metering_1)),
+             Sub_metering_2 = as.numeric(as.character(Sub_metering_2)),
+             Sub_metering_3 = as.numeric(as.character(Sub_metering_3)),
+             Global_reactive_power = as.numeric(as.character(Global_reactive_power)),
+             Voltage = as.numeric(as.character(Voltage)),
+             Global_intensity = as.numeric(as.character(Global_intensity))
+      )
+
+# Plot
+par(mfrow = c(2, 2), mar = c(4, 4, 2, 1))
+
+with(dat, plot(Date, Global_active_power, type="l", xlab = "", ylab = "Global Active Power (kilowatts)"))
+
+with(dat, plot(Date, Voltage, type="l", xlab = "datetime", ylab = "Voltage"))
+
+with(dat, plot(Date,Sub_metering_1, type="n", xlab = "", ylab = "Energy Sub Metering"))
+with(dat, points(Date,Sub_metering_1, col="black", type="l"))
+with(dat, points(Date,Sub_metering_2, col="red", type="l"))
+with(dat, points(Date,Sub_metering_3, col="blue", type="l"))
+legend("topright", lty=1, lwd=1, cex=0.6, col = c("black", "red", "blue"), 
+       legend = c("Sub_Metering_1", "Sub_Metering_2", "Sub_Metering_3"))
+
+with(dat, plot(Date, Global_reactive_power, type="l", xlab = "datetime", ylab = "Global_reactive_power"))
+
+# Save plot
+dev.copy(png, file = "plot4.png", width=480, height=480)
+dev.off()
